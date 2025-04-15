@@ -360,3 +360,39 @@ body {
 .formulaire-inscription__bouton:hover {
   background-color: #d4ac0d;
 }
+.header {
+  margin-bottom: 20px;
+}
+
+.header__title {
+  font-size: 2.5rem;
+  color: #007acc;
+}
+
+.header__label,
+.header__select {
+  font-size: 1rem;
+  margin: 10px;
+}
+
+.main__words {
+  margin: 20px auto;
+  padding: 10px;
+  max-width: 600px;
+  font-size: 1.2rem;
+  background-color: #8b8b8b;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.main__input {
+  width: 60%;
+  padding: 12px;
+  font-size: 1rem;
+  margin-top: 20px;
+}
+
+.main__results {
+  font-size: 1.2rem;
+  margin-top: 20px;
+}

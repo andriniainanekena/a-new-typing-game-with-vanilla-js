@@ -231,20 +231,21 @@
 
 
     <header>
-        <h1>Typing Test</h1>
-        <label for="mode">Select Mode:</label>
-        <select id="mode">
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-        </select>
+        <header class="header">
+            <h1 class="header__title">Typing Test</h1>
+            <label for="mode" class="header__label">Select Mode:</label>
+            <select id="mode" class="header__select">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
     </header>
 
-    <main>
-        <p id="word-display"></p>
-        <input type="text" id="input-field" autofocus>
-        <p id="results">Results : </p>
-    </main>
+    <main class="main">
+        <p id="word-display" class="main__words"></p>
+        <input type="text" id="input-field" class="main__input" autofocus />
+        <p id="results" class="main__results">Results:</p>
+      </main>
 
     <script src="script.js"></script>
 </body>
