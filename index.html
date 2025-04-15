@@ -231,22 +231,43 @@
 
 
 <div class="section jeu-de-typing" id="jeu-de-typing">
-        <header class="header">
-            <h1 class="header__title">Typing Test</h1>
-            <label for="mode" class="header__label">Select Mode:</label>
-            <select id="mode" class="header__select">
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-              
-            </select>
-    </header>
+    <header class="header">
+        <h1 class="header__title">Typing Test</h1>
+      
+        <div class="header__controls">
+          <label for="language" class="header__label">Langue:</label>
+          <select id="language" class="header__select">
+            <option value="en">Anglais</option>
+            <option value="fr">Français</option>
+          </select>
+      
+          <label for="mode" class="header__label">Mode:</label>
+          <select id="mode" class="header__select">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+              <label for="chrono" class="header__label">Chronomètre:</label>
+<select id="chrono" class="header__select">
+  <option value="off">Off</option>
+  <option value="30">30s</option>
+  <option value="60">60s</option>
+  <option value="120">120s</option>
+</select>
+        </div>
+
+      </header>
+      
 
     <main class="main">
         <p id="word-display" class="main__words"></p>
         <input type="text" id="input-field" class="main__input" autofocus />
         <p id="results" class="main__results">Results:</p>
       </main>
+    </div>
+    <div class="section a-propos" id="a-propos">
+
+        
     </div>
 
     <script src="script.js"></script>

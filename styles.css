@@ -378,8 +378,9 @@ body {
 .main__words {
   margin: 20px auto;
   padding: 10px;
-  max-width: 600px;
-  font-size: 1.2rem;
+  width: 20cm;
+  font-size: 1.3rem;
+  height: 6cm;
   background-color: #8b8b8b;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -390,9 +391,42 @@ body {
   padding: 12px;
   font-size: 1rem;
   margin-top: 20px;
+  margin-left: 4cm;
 }
 
 .main__results {
   font-size: 1.2rem;
   margin-top: 20px;
+  margin-left: 4cm;
+}
+
+.jeu-de-typing {
+  position: relative;
+  top: -1cm;
+}
+.header__controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.header__label {
+  font-weight: 600;
+  margin-right: 0.3rem;
+  color: #5168e9;
+}
+
+.header__select {
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.header__select:focus {
+  border-color: #0f62fe;
+  outline: none;
 }
