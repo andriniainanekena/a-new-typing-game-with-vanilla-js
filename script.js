@@ -9,73 +9,133 @@ let startTime = null,
   previousEndTime = null;
 let currentWordIndex = 0;
 const wordsToType = [];
+let timerInterval = null;
+let timeLeft = 0;
 
 const modeSelect = document.getElementById("mode");
+const languageSelect = document.getElementById("language");
+const chronoSelect = document.getElementById("chrono");
 const wordDisplay = document.getElementById("word-display");
 const inputField = document.getElementById("input-field");
 const results = document.getElementById("results");
 
+// Mots disponibles par langue et difficulté
 const words = {
-  easy: ["apple", "banana", "grape", "orange", "cherry"],
-  medium: ["keyboard", "monitor", "printer", "charger", "battery"],
-  hard: [
-    "synchronize",
-    "complicated",
-    "development",
-    "extravagant",
-    "misconception",
-  ],
+  en: {
+    easy: ["apple", "banana", "grape", "orange", "cherry"],
+    medium: ["keyboard", "monitor", "printer", "charger", "battery"],
+    hard: [
+      "synchronize",
+      "complicated",
+      "development",
+      "extravagant",
+      "misconception",
+    ],
+  },
+  fr: {
+    easy: ["pomme", "banane", "raisin", "orange", "cerise"],
+    medium: ["clavier", "écran", "imprimante", "chargeur", "batterie"],
+    hard: [
+      "synchroniser",
+      "compliqué",
+      "développement",
+      "extravagant",
+      "méconnaissance",
+    ],
+  },
 };
 
-// Generate a random word from the selected mode
-const getRandomWord = (mode) => {
-  const wordList = words[mode];
+// Générer un mot aléatoire selon la langue et le mode sélectionnés
+const getRandomWord = () => {
+  const language = languageSelect.value;
+  const mode = modeSelect.value;
+
+  if (!words[language] || !words[language][mode]) {
+    console.error(
+      `Configuration manquante pour langue: ${language}, mode: ${mode}`
+    );
+    return "erreur";
+  }
+
+  const wordList = words[language][mode];
   return wordList[Math.floor(Math.random() * wordList.length)];
 };
 
-// Initialize the typing test
+// Démarrer le chronomètre
+const startChrono = (duration) => {
+  clearInterval(timerInterval);
+  timeLeft = duration;
+
+  if (duration > 0) {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        endTest();
+      }
+    }, 1000);
+  }
+};
+
+// Terminer le test
+const endTest = () => {
+  inputField.disabled = true;
+  const elapsedTime = (Date.now() - startTime) / 1000 / 60;
+  const totalChars = wordsToType.slice(0, currentWordIndex).join(" ").length;
+  const wpm = totalChars / 5 / elapsedTime;
+  results.textContent = `Test terminé! WPM final: ${wpm.toFixed(2)}`;
+};
+
+// Initialiser le test de dactylographie
 const startTest = (wordCount = 50) => {
-  wordsToType.length = 0; // Clear previous words
-  wordDisplay.innerHTML = ""; // Clear display
+  wordsToType.length = 0;
+  wordDisplay.innerHTML = "";
   currentWordIndex = 0;
   startTime = null;
   previousEndTime = null;
+  inputField.disabled = false;
+  inputField.focus();
 
-  for (let i = 0; i < wordCount; i++) {
-    wordsToType.push(getRandomWord(modeSelect.value));
+  // Démarrer le chronomètre si activé
+  const chronoValue = chronoSelect.value;
+  if (chronoValue !== "off") {
+    startChrono(parseInt(chronoValue));
+  } else {
+    clearInterval(timerInterval);
   }
 
+  // Générer les mots
+  for (let i = 0; i < wordCount; i++) {
+    wordsToType.push(getRandomWord());
+  }
+
+  // Afficher les mots
   wordsToType.forEach((word, index) => {
     const span = document.createElement("span");
     span.textContent = word + " ";
-    if (index === 0) span.style.color = "red"; // Highlight first word
+    if (index === 0) span.style.color = "red";
     wordDisplay.appendChild(span);
   });
 
   inputField.value = "";
-  results.textContent = "";
+  results.textContent = "Results:";
 };
 
-// Start the timer when user begins typing
-const startTimer = () => {
-  if (!startTime) startTime = Date.now();
-};
-
-// Calculate and return WPM & accuracy
+// Calculer et retourner WPM & précision
 const getCurrentStats = () => {
-  const elapsedTime = (Date.now() - previousEndTime) / 1000; // Seconds
-  const wpm = wordsToType[currentWordIndex].length / 5 / (elapsedTime / 60); // 5 chars = 1 word
+  const elapsedTime = (Date.now() - previousEndTime) / 1000;
+  const wpm = wordsToType[currentWordIndex].length / 5 / (elapsedTime / 60);
   const accuracy =
     (wordsToType[currentWordIndex].length / inputField.value.length) * 100;
 
   return { wpm: wpm.toFixed(2), accuracy: accuracy.toFixed(2) };
 };
 
-// Move to the next word and update stats only on spacebar press
+// Passer au mot suivant
 const updateWord = (event) => {
   if (event.key === " ") {
-    // Check if spacebar is pressed
     if (inputField.value.trim() === wordsToType[currentWordIndex]) {
+      if (!startTime) startTime = Date.now();
       if (!previousEndTime) previousEndTime = startTime;
 
       const { wpm, accuracy } = getCurrentStats();
@@ -85,33 +145,43 @@ const updateWord = (event) => {
       previousEndTime = Date.now();
       highlightNextWord();
 
-      inputField.value = ""; // Clear input field after space
-      event.preventDefault(); // Prevent adding extra spaces
+      inputField.value = "";
+      event.preventDefault();
+
+      if (currentWordIndex >= wordsToType.length) {
+        endTest();
+      }
     }
   }
 };
 
-// Highlight the current word in red
+// Mettre en surbrillance le mot courant
 const highlightNextWord = () => {
   const wordElements = wordDisplay.children;
-
   if (currentWordIndex < wordElements.length) {
-    if (currentWordIndex > 0) {
-      wordElements[currentWordIndex - 1].style.color = "black";
-    }
-    wordElements[currentWordIndex].style.color = "red";
+    Array.from(wordElements).forEach((el, i) => {
+      el.style.color = i === currentWordIndex ? "red" : "black";
+    });
   }
 };
 
-// Event listeners
-// Attach `updateWord` to `keydown` instead of `input`
+// Réinitialiser immédiatement quand les options changent
+const handleOptionChange = () => {
+  startTest();
+  inputField.focus();
+};
+
+// Écouteurs d'événements
 inputField.addEventListener("keydown", (event) => {
-  startTimer();
+  if (!startTime) startTime = Date.now();
   updateWord(event);
 });
-modeSelect.addEventListener("change", () => startTest());
 
-// Start the test
+modeSelect.addEventListener("change", handleOptionChange);
+languageSelect.addEventListener("change", handleOptionChange);
+chronoSelect.addEventListener("change", handleOptionChange);
+
+// Démarrer le test initial
 startTest();
 
 const sections = document.querySelectorAll(".section");
