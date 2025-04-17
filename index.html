@@ -231,39 +231,39 @@
 
 
 <div class="section jeu-de-typing" id="jeu-de-typing">
-    <header class="header">
-      
-        <div class="header__controls">
-          <label for="language" class="header__label">Langue:</label>
-          <select id="language" class="header__select">
-            <option value="en">Anglais</option>
-            <option value="fr">Français</option>
-          </select>
-      
-          <label for="mode" class="header__label">Mode:</label>
-          <select id="mode" class="header__select">
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-              <label for="chrono" class="header__label">Chronomètre:</label>
-<select id="chrono" class="header__select">
-  <option value="off">Off</option>
-  <option value="30">30s</option>
-  <option value="60">60s</option>
-  <option value="120">120s</option>
-</select>
+    <header class="jeu-de-typing__menu">
+        <div class="menu-item">
+            <span class="menu-label">Langue:</span>
+            <select id="language">
+                <option value="en">Anglais</option>
+                <option value="fr">Français</option>
+            </select>
         </div>
-
-      </header>
-      
-
-    <main class="main">
-        <p id="word-display" class="main__words"></p>
-        <input type="text" id="input-field" class="main__input" autofocus />
-        <p id="results" class="main__results">Results: <span id="timer-display"></span></p>
-      </main>
-    </div>
+        <div class="menu-item">
+            <span class="menu-label">Mode:</span>
+            <select id="mode">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <div class="menu-item">
+            <span class="menu-label">Chronomètre:</span>
+            <select id="chrono">
+                <option value="15">15s</option>
+                <option value="30">30s</option>
+                <option value="60">60s</option>
+            </select>
+        </div>
+    </header>
+    <main>
+        <div id="word-display"></div>
+        <div id="timer"></div>
+        <div id="results"></div>
+        <button class="restart-button" id="restart">Recommencer</button>
+        <input type="text" class="hidden-input" id="input-field" autofocus>
+    </main>
+</div>
     <div class="section a-propos" id="a-propos">
 
         
