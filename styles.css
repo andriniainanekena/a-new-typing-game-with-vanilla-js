@@ -571,3 +571,27 @@ body {
   position: relative;
   top: 1.5cm;
 }
+
+.a-propos1 {
+  width: 13cm;
+  height: 10cm;
+  background-image: url(https://www.speakingsavvy.com.au/wp-content/uploads/2020/06/founding-story-Lisa-Evans-.jpg);
+  background-size: 15cm;
+  background-repeat: no-repeat;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  animation: bouge 6s ease-in-out infinite;
+  box-shadow: 0 0 20px rgb(156, 195, 255);
+  position: absolute;
+  top: 12cm;
+  left: -12cm;
+}
+.a-propos1 h1 {
+  color: #007acc;
+  position: relative;
+  left: 14cm;
+}
+.a-propos1 p {
+  margin-top: 1cm;
+  position: relative;
+  left: 14cm;
+}
