@@ -1,211 +1,174 @@
 /**
- * Point culture (en Français car je suis un peu obligé):
- * Dans ce genre de jeu, un mot equivaut a 5 caractères, y compris les espaces.
+ * Point culture (en Français car je suis un peu obligé): 
+ * Dans ce genre de jeu, un mot equivaut a 5 caractères, y compris les espaces. 
  * La precision, c'est le pourcentage de caractères tapées correctement sur toutes les caractères tapées.
- *
- * Sur ce... Amusez-vous bien !
+ * 
+ * Sur ce... Amusez-vous bien ! 
  */
-let startTime = null,
-  previousEndTime = null;
+let startTime = null, previousEndTime = null;
 let currentWordIndex = 0;
 const wordsToType = [];
-let timerInterval = null;
-let timeLeft = 0;
 
 const modeSelect = document.getElementById("mode");
-const languageSelect = document.getElementById("language");
-const chronoSelect = document.getElementById("chrono");
 const wordDisplay = document.getElementById("word-display");
 const inputField = document.getElementById("input-field");
 const results = document.getElementById("results");
 
-// Mots disponibles par langue et difficulté
 const words = {
-  en: {
     easy: ["apple", "banana", "grape", "orange", "cherry"],
     medium: ["keyboard", "monitor", "printer", "charger", "battery"],
-    hard: [
-      "synchronize",
-      "complicated",
-      "development",
-      "extravagant",
-      "misconception",
-    ],
-  },
-  fr: {
-    easy: ["pomme", "banane", "raisin", "orange", "cerise"],
-    medium: ["clavier", "écran", "imprimante", "chargeur", "batterie"],
-    hard: [
-      "synchroniser",
-      "compliqué",
-      "développement",
-      "extravagant",
-      "méconnaissance",
-    ],
-  },
+    hard: ["synchronize", "complicated", "development", "extravagant", "misconception"]
 };
 
-// Générer un mot aléatoire selon la langue et le mode sélectionnés
-const getRandomWord = () => {
-  const language = languageSelect.value;
-  const mode = modeSelect.value;
-
-  if (!words[language] || !words[language][mode]) {
-    console.error(
-      `Configuration manquante pour langue: ${language}, mode: ${mode}`
-    );
-    return "erreur";
-  }
-
-  const wordList = words[language][mode];
-  return wordList[Math.floor(Math.random() * wordList.length)];
+// Generate a random word from the selected mode
+const getRandomWord = (mode) => {
+    const wordList = words[mode];
+    return wordList[Math.floor(Math.random() * wordList.length)];
 };
 
-// Démarrer le chronomètre
-const startChrono = (duration) => {
-  clearInterval(timerInterval);
-  timeLeft = duration;
-
-  if (duration > 0) {
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        endTest();
-      }
-    }, 1000);
-  }
-};
-
-// Terminer le test
-const endTest = () => {
-  inputField.disabled = true;
-  const elapsedTime = (Date.now() - startTime) / 1000 / 60;
-  const totalChars = wordsToType.slice(0, currentWordIndex).join(" ").length;
-  const wpm = totalChars / 5 / elapsedTime;
-  results.textContent = `Test terminé! WPM final: ${wpm.toFixed(2)}`;
-};
-
-// Initialiser le test de dactylographie
+// Initialize the typing test
 const startTest = (wordCount = 50) => {
-  wordsToType.length = 0;
-  wordDisplay.innerHTML = "";
-  currentWordIndex = 0;
-  startTime = null;
-  previousEndTime = null;
-  inputField.disabled = false;
-  inputField.focus();
+    wordsToType.length = 0; // Clear previous words
+    wordDisplay.innerHTML = ""; // Clear display
+    currentWordIndex = 0;
+    startTime = null;
+    previousEndTime = null;
 
-  // Démarrer le chronomètre si activé
-  const chronoValue = chronoSelect.value;
-  if (chronoValue !== "off") {
-    startChrono(parseInt(chronoValue));
-  } else {
-    clearInterval(timerInterval);
-  }
-
-  // Générer les mots
-  for (let i = 0; i < wordCount; i++) {
-    wordsToType.push(getRandomWord());
-  }
-
-  // Afficher les mots
-  wordsToType.forEach((word, index) => {
-    const span = document.createElement("span");
-    span.textContent = word + " ";
-    if (index === 0) span.style.color = "red";
-    wordDisplay.appendChild(span);
-  });
-
-  inputField.value = "";
-  results.textContent = "Results:";
-};
-
-// Calculer et retourner WPM & précision
-const getCurrentStats = () => {
-  const elapsedTime = (Date.now() - previousEndTime) / 1000;
-  const wpm = wordsToType[currentWordIndex].length / 5 / (elapsedTime / 60);
-  const accuracy =
-    (wordsToType[currentWordIndex].length / inputField.value.length) * 100;
-
-  return { wpm: wpm.toFixed(2), accuracy: accuracy.toFixed(2) };
-};
-
-// Passer au mot suivant
-const updateWord = (event) => {
-  if (event.key === " ") {
-    if (inputField.value.trim() === wordsToType[currentWordIndex]) {
-      if (!startTime) startTime = Date.now();
-      if (!previousEndTime) previousEndTime = startTime;
-
-      const { wpm, accuracy } = getCurrentStats();
-      results.textContent = `WPM: ${wpm}, Accuracy: ${accuracy}%`;
-
-      currentWordIndex++;
-      previousEndTime = Date.now();
-      highlightNextWord();
-
-      inputField.value = "";
-      event.preventDefault();
-
-      if (currentWordIndex >= wordsToType.length) {
-        endTest();
-      }
+    for (let i = 0; i < wordCount; i++) {
+        wordsToType.push(getRandomWord(modeSelect.value));
     }
-  }
-};
 
-// Mettre en surbrillance le mot courant
-const highlightNextWord = () => {
-  const wordElements = wordDisplay.children;
-  if (currentWordIndex < wordElements.length) {
-    Array.from(wordElements).forEach((el, i) => {
-      el.style.color = i === currentWordIndex ? "red" : "black";
+    wordsToType.forEach((word, index) => {
+        const span = document.createElement("span");
+        span.textContent = word + " ";
+        if (index === 0) span.style.color = "red"; // Highlight first word
+        wordDisplay.appendChild(span);
     });
-  }
+
+    inputField.value = "";
+    results.textContent = "";
 };
 
-// Réinitialiser immédiatement quand les options changent
-const handleOptionChange = () => {
-  startTest();
-  inputField.focus();
+// Start the timer when user begins typing
+const startTimer = () => {
+    if (!startTime) startTime = Date.now();
 };
 
-// Écouteurs d'événements
+// Calculate and return WPM & accuracy
+const getCurrentStats = () => {
+    const elapsedTime = (Date.now() - previousEndTime) / 1000; // Seconds
+    const wpm = (wordsToType[currentWordIndex].length / 5) / (elapsedTime / 60); // 5 chars = 1 word
+    const accuracy = (wordsToType[currentWordIndex].length / inputField.value.length) * 100;
+
+    return { wpm: wpm.toFixed(2), accuracy: accuracy.toFixed(2) };
+};
+
+// Move to the next word and update stats only on spacebar press
+const updateWord = (event) => {
+    if (event.key === " ") { // Check if spacebar is pressed
+        if (inputField.value.trim() === wordsToType[currentWordIndex]) {
+            if (!previousEndTime) previousEndTime = startTime;
+
+            const { wpm, accuracy } = getCurrentStats();
+            results.textContent = `WPM: ${wpm}, Accuracy: ${accuracy}%`;
+
+            currentWordIndex++;
+            previousEndTime = Date.now();
+            highlightNextWord();
+
+            inputField.value = ""; // Clear input field after space
+            event.preventDefault(); // Prevent adding extra spaces
+        }
+    }
+};
+
+// Highlight the current word in red
+const highlightNextWord = () => {
+    const wordElements = wordDisplay.children;
+
+    if (currentWordIndex < wordElements.length) {
+        if (currentWordIndex > 0) {
+            wordElements[currentWordIndex - 1].style.color = "black";
+        }
+        wordElements[currentWordIndex].style.color = "red";
+    }
+};
+
+// Event listeners
+// Attach `updateWord` to `keydown` instead of `input`
 inputField.addEventListener("keydown", (event) => {
-  if (!startTime) startTime = Date.now();
-  updateWord(event);
+    startTimer();
+    updateWord(event);
 });
+modeSelect.addEventListener("change", () => startTest());
 
-modeSelect.addEventListener("change", handleOptionChange);
-languageSelect.addEventListener("change", handleOptionChange);
-chronoSelect.addEventListener("change", handleOptionChange);
-
-// Démarrer le test initial
+// Start the test
 startTest();
 
-const sections = document.querySelectorAll(".section");
+
+const sections = document.querySelectorAll('.section')
 function afficherSection(sectionId) {
-  sections.forEach((section) => {
-    section.classList.remove("section--active");
-  });
-  const targetSection = document.getElementById(sectionId);
-  if (targetSection) {
-    targetSection.classList.add("section--active");
-  }
+    sections.forEach(section => {
+        section.classList.remove('section--active')
+    })
+    const targetSection = document.getElementById(sectionId)
+    if (targetSection) {
+        targetSection.classList.add('section--active')
+        if (sectionId ==='jeu-de-typing') {
+            startTest();
+        }
+    } else {
+        console.warn(`Section "${sectionId}" introuvable, retour à l'accueil.`);
+        document.getElementById('accueil').classList.add('section--active');
+    }
+};
+
+
+document.querySelectorAll('.barre-laterale__item').forEach(item => {
+    item.addEventListener('click', () => {
+        const section = item.getAttribute('data-section')
+        if (section) {
+            afficherSection(section);
+        }
+    })
+});
+
+
+document.getElementById('start-test').addEventListener('click', () => {
+    afficherSection('jeu-de-typing')
+    startTest()
+})
+
+document.getElementById('start-competition').addEventListener('click', () => {
+    afficherSection('jeu-de-typing')
+    startTest()
+})
+
+const toggleModeButton = document.getElementById('toggle-mode')
+const body = document.body;
+const savedMode = localStorage.getItem('mode')
+
+if (savedMode) {
+    body.classList.add(savedMode)
+    if (savedMode === 'mode-clair') {
+        toggleModeButton.classList.remove('fa-moon')
+        toggleModeButton.classList.add('fa-sun')
+    }
 }
 
-document.querySelectorAll(".barre-laterale__item").forEach((item) => {
-  item.addEventListener("click", () => {
-    const section = item.getAttribute("data-section");
-    if (section) {
-      afficherSection(section);
-      if (section === "jeu-de-typing") {
-        startTest();
-      }
+toggleModeButton.addEventListener('click', () => {
+    if (body.classList.contains('mode-clair')) {
+        body.classList.remove('mode-clair')
+        toggleModeButton.classList.remove('fa-sun')
+        toggleModeButton.classList.add('fa-moon')
+        localStorage.setItem('mode', '')
+    } else {
+        body.classList.add('mode-clair')
+        toggleModeButton.classList.remove('fa-moon')
+        toggleModeButton.classList.add('fa-sun')
+        localStorage.setItem('mode', 'mode-clair')
     }
-  });
-});
+})
 
 document
   .getElementById("inscription-btn")
